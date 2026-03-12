@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>IT FC — Entreno</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c23;
+    --border: #1e2530;
+    --accent: #00d4ff;
+    --accent2: #ff4655;
+    --green: #00e676;
+    --yellow: #ffd600;
+    --text: #e8edf5;
+    --muted: #6b7a94;
+    --pitch: #1a4a2e;
+    --pitch-line: rgba(255,255,255,0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(180deg, #0d1117 0%, var(--bg) 100%);
+    padding: 28px 20px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; left: 50%; transform: translateX(-50%);
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-block;
+    background: var(--accent2);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+  }
+  .header h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    line-height: 1;
+    color: #fff;
+  }
+  .header h1 span { color: var(--accent); }
+  .header-sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 6px;
+    font-weight: 500;
+  }
+  .header-meta {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 16px;
+  }
+  .meta-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .meta-chip strong { color: var(--text); display: block; font-size: 14px; }
+
+  /* NAV DOTS */
+  .nav-pills {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 12px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+  .nav-pills::-webkit-scrollbar { display: none; }
+  .pill {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .pill:hover, .pill.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+  /* BLOCKS */
+  .blocks { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .block.done { opacity: 0.5; }
+  .block-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .block-num {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .b1 .block-num { background: rgba(0,212,255,0.15); color: var(--accent); }
+  .b2 .block-num { background: rgba(255,70,85,0.15); color: var(--accent2); }
+  .b3 .block-num { background: rgba(0,230,118,0.15); color: var(--green); }
+  .b4 .block-num { background: rgba(255,214,0,0.15); color: var(--yellow); }
+  .b5 .block-num { background: rgba(0,212,255,0.15); color: var(--accent); }
+  .block-info { flex: 1; }
+  .block-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 1.1;
+  }
+  .block-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .block-toggle {
+    color: var(--muted);
+    font-size: 18px;
+    transition: transform 0.3s;
+  }
+  .block-toggle.open { transform: rotate(180deg); }
+  .block-body {
+    display: none;
+    border-top: 1px solid var(--border);
+  }
+  .block-body.open { display: block; }
+
+  /* CHECK DONE */
+  .check-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--surface2);
+    border: none;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .check-btn:hover { background: rgba(0,230,118,0.1); color: var(--green); }
+  .check-btn.done { color: var(--green); }
+
+  /* EXERCISE CARD */
+  .ex-card {
+    padding: 16px;
+  }
+  .ex-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .ex-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 14px 0 6px;
+  }
+  .desc-text { font-size: 14px; line-height: 1.6; color: #b0bec5; }
+  .steps-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .steps-list li {
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: 14px; color: #b0bec5;
+  }
+  .step-num {
+    width: 22px; height: 22px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: var(--muted);
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .keys-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .keys-list li {
+    display: flex; gap: 8px; align-items: flex-start;
+    font-size: 13px; color: var(--text);
+  }
+  .keys-list li::before { content: '→'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+  .divider { border: none; border-top: 1px dashed var(--border); margin: 14px 0; }
+
+  /* ANIMATIONS CANVAS AREA */
+  .sim-area {
+    background: var(--surface2);
+    border-top: 1px solid var(--border);
+    padding: 14px 16px;
+  }
+  .sim-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .sim-label::before { content: '▶'; }
+  canvas {
+    width: 100%;
+    border-radius: 8px;
+    display: block;
+    touch-action: none;
+  }
+  .sim-controls {
+    display: flex; gap: 8px; margin-top: 10px;
+  }
+  .sim-btn {
+    flex: 1;
+    padding: 9px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .sim-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .sim-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+  /* TIMER */
+  .timer-section { padding: 16px; background: var(--surface2); border-top: 1px solid var(--border); }
+  .timer-display {
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+  .timer-display.warning { color: var(--accent2); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity: 0.5; } }
+  .timer-controls { display: flex; gap: 8px; margin-top: 10px; }
+  .timer-btn {
+    flex: 1; padding: 11px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+  }
+  .timer-btn.start { background: var(--green); color: #000; border-color: var(--green); }
+  .timer-btn.stop { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+
+  /* RESUMEN TABLE */
+  .summary { padding: 16px; }
+  .sum-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--surface2);
+    margin-bottom: 6px;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .sum-row.done-row { border-color: var(--green); }
+  .sum-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .sum-name { flex: 1; font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; }
+  .sum-time { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .sum-check { font-size: 16px; }
+
+  /* FORMATION VISUAL */
+  .formation-svg { width: 100%; border-radius: 8px; overflow: hidden; display: block; }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 24px 20px;
+    color: var(--muted);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .footer strong { color: var(--accent); }
+
+  /* Responsive tweaks */
+  @media(max-width:360px) {
+    .header h1 { font-size: 34px; }
+    .timer-display { font-size: 38px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge">⚽ Torneo Roberto Poma 2026</div>
+  <h1>IT <span>FC</span></h1>
+  <p class="header-sub">Plan de Entrenamiento — Jueves previo al partido</p>
+  <div class="header-meta">
+    <div class="meta-chip"><strong>60 min</strong>duración</div>
+    <div class="meta-chip"><strong>Media-baja</strong>intensidad</div>
+    <div class="meta-chip"><strong>2-1-2</strong>formación</div>
+  </div>
+</div>
+
+<div class="nav-pills">
+  <button class="pill active" onclick="scrollTo('#b1')">B1 Rondo</button>
+  <button class="pill" onclick="scrollTo('#b2')">B2 Paredes</button>
+  <button class="pill" onclick="scrollTo('#b3')">B3 Posición</button>
+  <button class="pill" onclick="scrollTo('#b4')">B4 Partido</button>
+  <button class="pill" onclick="scrollTo('#b5')">B5 Táctica</button>
+  <button class="pill" onclick="scrollTo('#resumen')">Resumen</button>
+</div>
+
+<div class="blocks">
+
+  <!-- BLOQUE 1 -->
+  <div class="block b1" id="b1">
+    <div class="block-header" onclick="toggle('b1')">
+      <div class="block-num">1</div>
+      <div class="block-info">
+        <div class="block-title">Calentamiento con balón</div>
+        <div class="block-meta">10 min · Rondo en círculo</div>
+      </div>
+      <div class="block-toggle" id="tog-b1">▼</div>
+    </div>
+    <div class="block-body" id="body-b1">
+      <div class="ex-card">
+        <div class="ex-label">Ejercicio</div>
+        <div class="ex-name">Rondo en Círculo</div>
+
+        <div class="section-title">¿Para qué sirve?</div>
+        <p class="desc-text">Calienta progresivo, activa visión periférica y obliga a pensar antes de recibir. Mismo principio del juego al toque del partido.</p>
+
+        <div class="section-title">¿Cómo se hace?</div>
+        <ul class="steps-list">
+          <li><div class="step-num">1</div>Círculo de 6-8 jugadores, separados ~3 metros entre sí.</li>
+          <li><div class="step-num">2</div>2 jugadores en el centro como "recuperadores".</li>
+          <li><div class="step-num">3</div>Los de afuera se pasan con máximo 2 toques.</li>
+          <li><div class="step-num">4</div>Si interceptan, el del mal pase entra al centro.</li>
+          <li><div class="step-num">5</div>2 rondas de 4 minutos. Rotar los del centro.</li>
+        </ul>
+
+        <div class="section-title">Puntos clave</div>
+        <ul class="keys-list">
+          <li>Antes de recibir, ya saber a quién le vas a pasar.</li>
+          <li>El pase al pie del compañero, no a 2 metros.</li>
+          <li>Los del centro presionan en pareja, no solos.</li>
+        </ul>
+      </div>
+
+      <div class="sim-area">
+        <div class="sim-label">Simulación animada</div>
+        <canvas id="c1" height="220"></canvas>
+        <div class="sim-controls">
+          <button class="sim-btn" id="btn-c1-play" onclick="toggleSim('c1')">▶ Play</button>
+          <button class="sim-btn" onclick="resetSim('c1')">↺ Reset</button>
+        </div>
+      </div>
+
+      <div class="timer-section">
+        <div class="section-title" style="margin-top:0">Cronómetro — 10 min</div>
+        <div class="timer-display" id="t-b1">10:00</div>
+        <div class="timer-controls">
+          <button class="timer-btn start" id="tbtn-b1-start" onclick="startTimer('b1', 600)">▶ Iniciar</button>
+          <button class="timer-btn" onclick="resetTimer('b1', 600)">↺ Reset</button>
+        </div>
+      </div>
+
+      <button class="check-btn" id="chk-b1" onclick="markDone('b1')">✓ Marcar como completado</button>
+    </div>
+  </div>
+
+  <!-- BLOQUE 2 -->
+  <div class="block b2" id="b2">
+    <div class="block-header" onclick="toggle('b2')">
+      <div class="block-num">2</div>
+      <div class="block-info">
+        <div class="block-title">Cortar Paredes</div>
+        <div class="block-meta">15 min · 2 ejercicios</div>
+      </div>
+      <div class="block-toggle" id="tog-b2">▼</div>
+    </div>
+    <div class="block-body" id="body-b2">
+      <div class="ex-card">
+        <div class="ex-label">Ejercicio 2A · 8 min</div>
+        <div class="ex-name">Defensa Sin Morder</div>
+        <p class="desc-text">El defensor aprende a NO lanzarse al primer pase del rival.</p>
+
+        <div class="section-title">¿Cómo se hace?</div>
+        <ul class="steps-list">
+          <li><div class="step-num">1</div>Parejas: atacante y defensor frente a frente.</li>
+          <li><div class="step-num">2</div>Un tercer jugador a un lado como "apoyo" del atacante.</li>
+          <li><div class="step-num">3</div>Atacante pasa al apoyo e intenta correr para recibir la devolución.</li>
+          <li><div class="step-num">4</div>Defensor NO sigue el balón. Retrocede de frente al atacante.</li>
+          <li><div class="step-num">5</div>Repetir 5 veces y cambiar roles.</li>
+        </ul>
+
+        <div class="section-title">Puntos clave</div>
+        <ul class="keys-list">
+          <li>Defensor retrocede, NUNCA da la espalda al atacante.</li>
+          <li>No lanzarse, cerrar el espacio esperando.</li>
+          <li>Rodillas flexionadas, listo para reaccionar.</li>
+          <li>Si no muerdo el pase, la pared no funciona.</li>
+        </ul>
+
+        <hr class="divider">
+
+        <div class="ex-label">Ejercicio 2B · 7 min</div>
+        <div class="ex-name">Cobertura en Parejas</div>
+        <p class="desc-text">2 defensores vs 2 atacantes — comunicación y cobertura.</p>
+
+        <div class="section-title">¿Cómo se hace?</div>
+        <ul class="steps-list">
+          <li><div class="step-num">1</div>Dos porterías pequeñas con conos (2m), separadas 15 metros.</li>
+          <li><div class="step-num">2</div>2 atacantes intentan hacer paredes para llegar al arco.</li>
+          <li><div class="step-num">3</div>Uno presiona al que tiene balón, el otro cubre al que se desmarca.</li>
+          <li><div class="step-num">4</div>El que cubre avisa en voz alta: "yo cubro", "atrás tuyo".</li>
+          <li><div class="step-num">5</div>Rondas de 2 minutos. Rotar roles.</li>
+        </ul>
+
+        <div class="section-title">Puntos clave</div>
+        <ul class="keys-list">
+          <li>SIEMPRE hablar. Sin aviso, tu compañero no sabe qué pasa.</li>
+          <li>El que presiona va controlado, solo cierra espacio.</li>
+          <li>El que cubre: entre el 2do atacante y el arco.</li>
+          <li>Nunca los dos al mismo jugador. Jamás.</li>
+        </ul>
+      </div>
+
+      <div class="sim-area">
+        <div class="sim-label">Simulación — Defensa sin morder</div>
+        <canvas id="c2" height="220"></canvas>
+        <div class="sim-controls">
+          <button class="sim-btn" id="btn-c2-play" onclick="toggleSim('c2')">▶ Play</button>
+          <button class="sim-btn" onclick="resetSim('c2')">↺ Reset</button>
+        </div>
+      </div>
+
+      <div class="timer-section">
+        <div class="section-title" style="margin-top:0">Cronómetro — 15 min</div>
+        <div class="timer-display" id="t-b2">15:00</div>
+        <div class="timer-controls">
+          <button class="timer-btn start" id="tbtn-b2-start" onclick="startTimer('b2', 900)">▶ Iniciar</button>
+          <button class="timer-btn" onclick="resetTimer('b2', 900)">↺ Reset</button>
+        </div>
+      </div>
+
+      <button class="check-btn" id="chk-b2" onclick="markDone('b2')">✓ Marcar como completado</button>
+    </div>
+  </div>
+
+  <!-- BLOQUE 3 -->
+  <div class="block b3" id="b3">
+    <div class="block-header" onclick="toggle('b3')">
+      <div class="block-num">3</div>
+      <div class="block-info">
+        <div class="block-title">Mantener la Posición</div>
+        <div class="block-meta">15 min · 2 ejercicios</div>
+      </div>
+      <div class="block-toggle" id="tog-b3">▼</div>
+    </div>
+    <div class="block-body" id="body-b3">
+      <div class="ex-card">
+        <div class="ex-label">Ejercicio 3A · 10 min</div>
+        <div class="ex-name">Partido con Zonas Asignadas</div>
+        <p class="desc-text">Cancha en 3 zonas. Cada jugador queda en su zona. Entrena disciplina posicional.</p>
+
+        <div class="section-title">Formación 2-1-2 por zonas</div>
+        <ul class="keys-list">
+          <li><strong style="color:var(--accent2)">Zona defensiva</strong> → Los 2 centrales</li>
+          <li><strong style="color:var(--yellow)">Zona media</strong> → El pívot</li>
+          <li><strong style="color:var(--green)">Zona ataque</strong> → Los 2 atacantes de banda</li>
+        </ul>
+
+        <div class="section-title">Puntos clave</div>
+        <ul class="keys-list">
+          <li>Central: tu zona es atrás. Sin importar las ganas de subir.</li>
+          <li>Pívot: conectas defensa con ataque. No te pegues a ninguna.</li>
+          <li>Atacante: quedás arriba, esperás el balón ahí.</li>
+          <li>La tentación de salir de zona te desarma en el partido.</li>
+        </ul>
+
+        <hr class="divider">
+
+        <div class="ex-label">Ejercicio 3B · 5 min</div>
+        <div class="ex-name">Posesión a 3 Toques</div>
+        <p class="desc-text">5 vs 5. Máximo 3 toques por jugador. Si da el cuarto, pierde la posesión.</p>
+
+        <div class="section-title">Puntos clave</div>
+        <ul class="keys-list">
+          <li>Antes de recibir, ya saber qué harás con el balón.</li>
+          <li>Sin pase claro, devolvé al que te la dio.</li>
+          <li>Moverse sin balón es fundamental.</li>
+          <li>Recibo → paso → me muevo. Ese es el ritmo.</li>
+        </ul>
+      </div>
+
+      <div class="sim-area">
+        <div class="sim-label">Simulación — Zonas 2-1-2</div>
+        <canvas id="c3" height="260"></canvas>
+        <div class="sim-controls">
+          <button class="sim-btn" id="btn-c3-play" onclick="toggleSim('c3')">▶ Play</button>
+          <button class="sim-btn" onclick="resetSim('c3')">↺ Reset</button>
+        </div>
+      </div>
+
+      <div class="timer-section">
+        <div class="section-title" style="margin-top:0">Cronómetro — 15 min</div>
+        <div class="timer-display" id="t-b3">15:00</div>
+        <div class="timer-controls">
+          <button class="timer-btn start" id="tbtn-b3-start" onclick="startTimer('b3', 900)">▶ Iniciar</button>
+          <button class="timer-btn" onclick="resetTimer('b3', 900)">↺ Reset</button>
+        </div>
+      </div>
+
+      <button class="check-btn" id="chk-b3" onclick="markDone('b3')">✓ Marcar como completado</button>
+    </div>
+  </div>
+
+  <!-- BLOQUE 4 -->
+  <div class="block b4" id="b4">
+    <div class="block-header" onclick="toggle('b4')">
+      <div class="block-num">4</div>
+      <div class="block-info">
+        <div class="block-title">Partido Simulado</div>
+        <div class="block-meta">15 min · Con rotaciones</div>
+      </div>
+      <div class="block-toggle" id="tog-b4">▼</div>
+    </div>
+    <div class="block-body" id="body-b4">
+      <div class="ex-card">
+        <div class="ex-label">Ejercicio</div>
+        <div class="ex-name">Simulación con Rotaciones</div>
+        <p class="desc-text">Partido 15 min. Cada 3 minutos, obligatorio al menos un cambio por equipo. Entrena rotación preventiva.</p>
+
+        <div class="section-title">¿Cómo se hace?</div>
+        <ul class="steps-list">
+          <li><div class="step-num">1</div>Dividir 16 jugadores + portero en dos equipos.</li>
+          <li><div class="step-num">2</div>15 minutos corridos de partido.</li>
+          <li><div class="step-num">3</div>Cada 3 min, obligatorio hacer al menos un cambio.</li>
+          <li><div class="step-num">4</div>El que sale observa y está listo para la siguiente.</li>
+          <li><div class="step-num">5</div>El que entra se ubica inmediatamente en su posición.</li>
+        </ul>
+
+        <div class="section-title">Puntos clave</div>
+        <ul class="keys-list">
+          <li>El cambio no es castigo. Es estrategia.</li>
+          <li>El que entra sabe exactamente dónde pararse.</li>
+          <li>Cambio rápido, sin perder tiempo.</li>
+          <li>Los de afuera: estirar y atentos, no sentados.</li>
+        </ul>
+
+        <div class="section-title">Para el partido real</div>
+        <ul class="keys-list">
+          <li>Cambios planificados cada 5-7 min de juego.</li>
+          <li>Bloques de rotación definidos antes de jugar.</li>
+          <li>El capitán o el que coordina avisa cuándo entran.</li>
+        </ul>
+      </div>
+
+      <div class="sim-area">
+        <div class="sim-label">Simulación — Rotación de jugadores</div>
+        <canvas id="c4" height="220"></canvas>
+        <div class="sim-controls">
+          <button class="sim-btn active" id="btn-c4-play" onclick="toggleSim('c4')">▶ Play</button>
+          <button class="sim-btn" onclick="resetSim('c4')">↺ Reset</button>
+        </div>
+      </div>
+
+      <div class="timer-section">
+        <div class="section-title" style="margin-top:0">Cronómetro — 15 min</div>
+        <div class="timer-display" id="t-b4">15:00</div>
+        <div class="timer-controls">
+          <button class="timer-btn start" id="tbtn-b4-start" onclick="startTimer('b4', 900)">▶ Iniciar</button>
+          <button class="timer-btn" onclick="resetTimer('b4', 900)">↺ Reset</button>
+        </div>
+      </div>
+
+      <button class="check-btn" id="chk-b4" onclick="markDone('b4')">✓ Marcar como completado</button>
+    </div>
+  </div>
+
+  <!-- BLOQUE 5 -->
+  <div class="block b5" id="b5">
+    <div class="block-header" onclick="toggle('b5')">
+      <div class="block-num">5</div>
+      <div class="block-info">
+        <div class="block-title">Charla Táctica</div>
+        <div class="block-meta">5 min · Repasar formación y roles</div>
+      </div>
+      <div class="block-toggle" id="tog-b5">▼</div>
+    </div>
+    <div class="block-body" id="body-b5">
+      <div class="ex-card">
+        <div class="ex-label">Formación Base</div>
+        <div class="ex-name">2 — 1 — 2</div>
+        <p class="desc-text" style="margin-bottom:12px">Los 2 centrales son la muralla. El pívot conecta. Los atacantes de banda abren la cancha.</p>
+
+        <!-- Formation SVG -->
+        <svg class="formation-svg" viewBox="0 0 300 360" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- Pitch -->
+          <rect width="300" height="360" fill="#1a4a2e" rx="10"/>
+          <!-- Lines -->
+          <rect x="20" y="20" width="260" height="320" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" rx="4"/>
+          <line x1="20" y1="180" x2="280" y2="180" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+          <circle cx="150" cy="180" r="30" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+          <circle cx="150" cy="180" r="3" fill="rgba(255,255,255,0.3)"/>
+          <!-- Goal areas -->
+          <rect x="95" y="20" width="110" height="35" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+          <rect x="95" y="305" width="110" height="35" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+          <!-- Goals -->
+          <rect x="120" y="14" width="60" height="8" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" rx="1"/>
+          <rect x="120" y="338" width="60" height="8" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" rx="1"/>
+
+          <!-- Zone overlays -->
+          <rect x="20" y="230" width="260" height="110" fill="rgba(255,70,85,0.07)" rx="0"/>
+          <rect x="20" y="145" width="260" height="85" fill="rgba(255,214,0,0.06)" rx="0"/>
+          <rect x="20" y="20" width="260" height="125" fill="rgba(0,230,118,0.07)" rx="0"/>
+
+          <!-- Zone labels -->
+          <text x="30" y="330" fill="rgba(255,70,85,0.6)" font-size="9" font-family="Barlow Condensed" font-weight="700" letter-spacing="1">ZONA DEFENSIVA</text>
+          <text x="30" y="196" fill="rgba(255,214,0,0.6)" font-size="9" font-family="Barlow Condensed" font-weight="700" letter-spacing="1">ZONA MEDIA</text>
+          <text x="30" y="40" fill="rgba(0,230,118,0.6)" font-size="9" font-family="Barlow Condensed" font-weight="700" letter-spacing="1">ZONA ATAQUE</text>
+
+          <!-- ATACANTES (banda) -->
+          <circle cx="90" cy="80" r="16" fill="#00e676" filter="url(#glow)" opacity="0.9"/>
+          <text x="90" y="85" text-anchor="middle" fill="#000" font-size="9" font-family="Barlow Condensed" font-weight="900">ATQ</text>
+          <circle cx="210" cy="80" r="16" fill="#00e676" filter="url(#glow)" opacity="0.9"/>
+          <text x="210" y="85" text-anchor="middle" fill="#000" font-size="9" font-family="Barlow Condensed" font-weight="900">ATQ</text>
+
+          <!-- PIVOTE -->
+          <circle cx="150" cy="175" r="16" fill="#ffd600" filter="url(#glow)" opacity="0.95"/>
+          <text x="150" y="180" text-anchor="middle" fill="#000" font-size="9" font-family="Barlow Condensed" font-weight="900">PVT</text>
+
+          <!-- CENTRALES -->
+          <circle cx="95" cy="280" r="16" fill="#ff4655" filter="url(#glow)" opacity="0.9"/>
+          <text x="95" y="285" text-anchor="middle" fill="#fff" font-size="9" font-family="Barlow Condensed" font-weight="900">DFC</text>
+          <circle cx="205" cy="280" r="16" fill="#ff4655" filter="url(#glow)" opacity="0.9"/>
+          <text x="205" y="285" text-anchor="middle" fill="#fff" font-size="9" font-family="Barlow Condensed" font-weight="900">DFC</text>
+
+          <!-- PORTERO -->
+          <circle cx="150" cy="335" r="14" fill="#00d4ff" opacity="0.85"/>
+          <text x="150" y="339" text-anchor="middle" fill="#000" font-size="9" font-family="Barlow Condensed" font-weight="900">POR</text>
+        </svg>
+
+        <div class="section-title" style="margin-top:14px">Roles defensivos</div>
+        <ul class="keys-list">
+          <li><strong style="color:var(--accent2)">Centrales:</strong> no morder paredes, retroceder de frente.</li>
+          <li><strong style="color:var(--yellow)">Pívot:</strong> primer filtro, presiona controlado.</li>
+          <li><strong style="color:var(--green)">Atacantes:</strong> repliegan al perder el balón.</li>
+        </ul>
+
+        <div class="section-title">Roles ofensivos</div>
+        <ul class="keys-list">
+          <li>Salir jugando desde atrás con calma, buscar al pívot.</li>
+          <li>Pocos toques, no retener la pelota.</li>
+          <li>Buscar paredes nosotros también.</li>
+        </ul>
+
+        <div class="section-title">Mentalidad 💪</div>
+        <ul class="keys-list">
+          <li>El primer tiempo demostramos que podemos competir.</li>
+          <li>Sostenerlo los 50 min con inteligencia y rotación.</li>
+          <li>Partido a partido, sin desesperarnos.</li>
+        </ul>
+      </div>
+
+      <div class="timer-section">
+        <div class="section-title" style="margin-top:0">Cronómetro — 5 min</div>
+        <div class="timer-display" id="t-b5">05:00</div>
+        <div class="timer-controls">
+          <button class="timer-btn start" id="tbtn-b5-start" onclick="startTimer('b5', 300)">▶ Iniciar</button>
+          <button class="timer-btn" onclick="resetTimer('b5', 300)">↺ Reset</button>
+        </div>
+      </div>
+
+      <button class="check-btn" id="chk-b5" onclick="markDone('b5')">✓ Marcar como completado</button>
+    </div>
+  </div>
+
+  <!-- RESUMEN -->
+  <div class="block b1" id="resumen">
+    <div class="block-header" onclick="toggle('res')">
+      <div class="block-num" style="background:rgba(255,255,255,0.05);color:var(--muted)">📋</div>
+      <div class="block-info">
+        <div class="block-title">Resumen del Entreno</div>
+        <div class="block-meta">60 min total</div>
+      </div>
+      <div class="block-toggle" id="tog-res">▼</div>
+    </div>
+    <div class="block-body" id="body-res">
+      <div class="summary">
+        <div class="sum-row" id="sum-b1">
+          <div class="sum-dot" style="background:var(--accent)"></div>
+          <div class="sum-name">Rondo en círculo</div>
+          <div class="sum-time">10 min</div>
+          <div class="sum-check" id="scheck-b1">○</div>
+        </div>
+        <div class="sum-row" id="sum-b2">
+          <div class="sum-dot" style="background:var(--accent2)"></div>
+          <div class="sum-name">Cortar paredes</div>
+          <div class="sum-time">15 min</div>
+          <div class="sum-check" id="scheck-b2">○</div>
+        </div>
+        <div class="sum-row" id="sum-b3">
+          <div class="sum-dot" style="background:var(--green)"></div>
+          <div class="sum-name">Mantener posición</div>
+          <div class="sum-time">15 min</div>
+          <div class="sum-check" id="scheck-b3">○</div>
+        </div>
+        <div class="sum-row" id="sum-b4">
+          <div class="sum-dot" style="background:var(--yellow)"></div>
+          <div class="sum-name">Partido con rotaciones</div>
+          <div class="sum-time">15 min</div>
+          <div class="sum-check" id="scheck-b4">○</div>
+        </div>
+        <div class="sum-row" id="sum-b5">
+          <div class="sum-dot" style="background:var(--accent)"></div>
+          <div class="sum-name">Charla táctica</div>
+          <div class="sum-time">5 min</div>
+          <div class="sum-check" id="scheck-b5">○</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <strong>IT FC</strong> · Cada entreno nos hace mejor equipo ⚽💪
+</div>
+
+<script>
+// =========================================================
+// TOGGLE BLOCKS
+// =========================================================
+function toggle(id) {
+  const body = document.getElementById('body-' + id);
+  const tog = document.getElementById('tog-' + id);
+  if (!body || !tog) return;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  tog.classList.toggle('open', !isOpen);
+}
+function scrollTo(sel) {
+  const el = document.querySelector(sel);
+  if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  // auto open
+  const id = sel.replace('#', '');
+  const body = document.getElementById('body-' + id);
+  if (body && !body.classList.contains('open')) toggle(id);
+}
+
+// =========================================================
+// TIMERS
+// =========================================================
+const timers = {};
+function formatTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+}
+function startTimer(id, total) {
+  if (timers[id] && timers[id].running) return;
+  const display = document.getElementById('t-' + id);
+  const btn = document.getElementById('tbtn-' + id + '-start');
+  if (!timers[id]) timers[id] = { remaining: total, running: false };
+  timers[id].running = true;
+  btn.textContent = '⏸ Pause';
+  btn.classList.remove('start');
+  btn.classList.add('stop');
+  btn.onclick = () => pauseTimer(id);
+  timers[id].interval = setInterval(() => {
+    timers[id].remaining--;
+    display.textContent = formatTime(timers[id].remaining);
+    if (timers[id].remaining <= 30) display.classList.add('warning');
+    if (timers[id].remaining <= 0) {
+      clearInterval(timers[id].interval);
+      timers[id].running = false;
+      display.textContent = '00:00';
+      display.classList.add('warning');
+      if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
+      btn.textContent = '✓ Listo';
+    }
+  }, 1000);
+}
+function pauseTimer(id) {
+  if (!timers[id]) return;
+  clearInterval(timers[id].interval);
+  timers[id].running = false;
+  const btn = document.getElementById('tbtn-' + id + '-start');
+  btn.textContent = '▶ Continuar';
+  btn.classList.remove('stop');
+  btn.classList.add('start');
+  btn.onclick = () => startTimer(id, timers[id].remaining);
+}
+function resetTimer(id, total) {
+  if (timers[id]) { clearInterval(timers[id].interval); }
+  timers[id] = { remaining: total, running: false };
+  const display = document.getElementById('t-' + id);
+  display.textContent = formatTime(total);
+  display.classList.remove('warning');
+  const btn = document.getElementById('tbtn-' + id + '-start');
+  btn.textContent = '▶ Iniciar';
+  btn.classList.add('start');
+  btn.classList.remove('stop');
+  btn.onclick = () => startTimer(id, total);
+}
+
+// =========================================================
+// MARK DONE
+// =========================================================
+const doneSet = new Set();
+function markDone(id) {
+  doneSet.add(id);
+  const block = document.getElementById(id);
+  block.classList.add('done');
+  const btn = document.getElementById('chk-' + id);
+  btn.textContent = '✅ Completado';
+  btn.classList.add('done');
+  const scheck = document.getElementById('scheck-' + id);
+  if (scheck) scheck.textContent = '✓';
+  const sum = document.getElementById('sum-' + id);
+  if (sum) sum.classList.add('done-row');
+}
+
+// =========================================================
+// CANVAS SIMULATIONS
+// =========================================================
+const sims = {};
+
+function getCanvas(id) {
+  const c = document.getElementById(id);
+  const w = c.parentElement.clientWidth - 32;
+  c.width = w;
+  c.style.width = w + 'px';
+  return c;
+}
+
+// -------- RONDO (c1) --------
+function initC1() {
+  const c = getCanvas('c1');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const cx = W/2, cy = H/2;
+  const R = Math.min(W,H)*0.35;
+
+  // 7 outer players
+  const n = 7;
+  const outers = Array.from({length: n}, (_, i) => ({
+    angle: (i/n)*Math.PI*2,
+    r: R,
+    color: '#00d4ff',
+    label: 'J' + (i+1)
+  }));
+  // 2 center players
+  const inners = [
+    { x: cx - 18, y: cy, color: '#ff4655', label: 'R' },
+    { x: cx + 18, y: cy, color: '#ff4655', label: 'R' }
+  ];
+
+  let t = 0, ballHolder = 0, ballTarget = 2, ballProgress = 0;
+  let ballX, ballY, lastHolder = 0;
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    // bg
+    ctx.fillStyle = '#0f1a13';
+    ctx.fillRect(0,0,W,H);
+
+    // circle guide
+    ctx.beginPath();
+    ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // pass line
+    const from = outers[ballHolder];
+    const to = outers[ballTarget];
+    const fx = cx + Math.cos(from.angle)*from.r;
+    const fy = cy + Math.sin(from.angle)*from.r;
+    const tx2 = cx + Math.cos(to.angle)*to.r;
+    const ty = cy + Math.sin(to.angle)*to.r;
+
+    ctx.beginPath();
+    ctx.moveTo(fx, fy); ctx.lineTo(tx2, ty);
+    ctx.strokeStyle = 'rgba(0,212,255,0.25)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4,4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // ball position
+    ballX = fx + (tx2-fx)*ballProgress;
+    ballY = fy + (ty-fy)*ballProgress;
+
+    // outer players
+    outers.forEach((p, i) => {
+      const px = cx + Math.cos(p.angle)*p.r;
+      const py = cy + Math.sin(p.angle)*p.r;
+      ctx.beginPath();
+      ctx.arc(px, py, 12, 0, Math.PI*2);
+      ctx.fillStyle = i === ballHolder ? '#00d4ff' : (i === ballTarget ? 'rgba(0,212,255,0.4)' : 'rgba(0,212,255,0.2)');
+      ctx.fill();
+      ctx.fillStyle = '#000';
+      ctx.font = '700 8px Barlow Condensed';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(p.label, px, py);
+    });
+
+    // inner players (move slightly toward ball)
+    inners.forEach((p, i) => {
+      // animate inner toward ball
+      const dx = ballX - p.x, dy = ballY - p.y;
+      const dist = Math.sqrt(dx*dx+dy*dy);
+      const ox = p.x + (dx/dist)*10*Math.sin(t*0.04 + i);
+      const oy = p.y + (dy/dist)*10*Math.sin(t*0.04 + i);
+      ctx.beginPath();
+      ctx.arc(ox, oy, 12, 0, Math.PI*2);
+      ctx.fillStyle = '#ff4655';
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = '700 8px Barlow Condensed';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(p.label, ox, oy);
+    });
+
+    // ball
+    ctx.beginPath();
+    ctx.arc(ballX, ballY, 6, 0, Math.PI*2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+
+    t++;
+    ballProgress += 0.018;
+    if (ballProgress >= 1) {
+      ballProgress = 0;
+      lastHolder = ballHolder;
+      ballHolder = ballTarget;
+      // pick next random outer
+      let next;
+      do { next = Math.floor(Math.random() * n); }
+      while (next === ballHolder || next === lastHolder);
+      ballTarget = next;
+    }
+  }
+
+  return draw;
+}
+
+// -------- DEFENSA SIN MORDER (c2) --------
+function initC2() {
+  const c = getCanvas('c2');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+
+  let t = 0;
+  // Positions
+  const atq = { x: W*0.25, y: H*0.3 };
+  const apoyo = { x: W*0.75, y: H*0.3 };
+  const goal = { x: W*0.5, y: H*0.92 };
+
+  let phase = 0; // 0=hold, 1=pass to apoyo, 2=atq runs, 3=def retreats
+  let phaseT = 0;
+  let ballX = atq.x, ballY = atq.y;
+  let defX = W*0.5, defY = H*0.65;
+  let atqX = atq.x, atqY = atq.y;
+
+  function drawPlayer(x, y, col, lbl, glow=false) {
+    if (glow) {
+      ctx.beginPath(); ctx.arc(x,y,18,0,Math.PI*2);
+      ctx.fillStyle = col.replace(')',',0.2)').replace('rgb','rgba');
+      ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(x,y,13,0,Math.PI*2);
+    ctx.fillStyle = col; ctx.fill();
+    ctx.fillStyle = ['#ff4655','#e53935'].includes(col) ? '#fff' : '#000';
+    ctx.font = '700 8px Barlow Condensed';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(lbl, x, y);
+  }
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#0f1a13'; ctx.fillRect(0,0,W,H);
+
+    // draw goal
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    ctx.fillRect(W*0.35, H*0.88, W*0.3, 12);
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth=1.5;
+    ctx.strokeRect(W*0.35, H*0.88, W*0.3, 12);
+
+    // labels
+    ctx.fillStyle = 'rgba(0,212,255,0.5)';
+    ctx.font = '600 9px Barlow';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('ARCO', W*0.35, H*0.88+14);
+
+    phaseT++;
+
+    // Phase logic (looping)
+    const cycle = 180;
+    const cp = phaseT % cycle;
+
+    let bx = atq.x, by = atq.y;
+    let ax = atq.x, ay = atq.y;
+    let dx = W*0.5, dy = H*0.62;
+
+    if (cp < 40) {
+      // hold ball
+      bx = atq.x; by = atq.y; ax=atq.x; ay=atq.y;
+      dx = W*0.5; dy = H*0.62;
+    } else if (cp < 80) {
+      // pass to apoyo
+      const p = (cp-40)/40;
+      bx = atq.x + (apoyo.x-atq.x)*p;
+      by = atq.y + (apoyo.y-atq.y)*p;
+      ax = atq.x; ay = atq.y;
+      dx = W*0.5; dy = H*0.62;
+    } else if (cp < 130) {
+      // atq runs forward, ball stays at apoyo, def retreats
+      const p = (cp-80)/50;
+      bx = apoyo.x; by = apoyo.y;
+      ax = atq.x + (W*0.5 - atq.x)*p;
+      ay = atq.y + (H*0.65 - atq.y)*p;
+      // def retreats to maintain gap
+      dx = W*0.5;
+      dy = H*0.62 + (H*0.72-H*0.62)*p;
+    } else if (cp < 170) {
+      // apoyo returns pass, atq continues run
+      const p = (cp-130)/40;
+      bx = apoyo.x + (W*0.5 - apoyo.x)*p;
+      by = apoyo.y + (H*0.65 - apoyo.y)*p;
+      ax = W*0.5; ay = H*0.65;
+      dx = W*0.5; dy = H*0.72;
+    } else {
+      // reset
+      bx=atq.x; by=atq.y; ax=atq.x; ay=atq.y;
+      dx=W*0.5; dy=H*0.62;
+    }
+
+    // dashed line - pass route
+    ctx.beginPath();
+    ctx.moveTo(atq.x, atq.y);
+    ctx.lineTo(apoyo.x, apoyo.y);
+    ctx.strokeStyle='rgba(0,212,255,0.15)'; ctx.lineWidth=1; ctx.setLineDash([3,4]);
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // run arrow
+    if (cp > 80 && cp < 160) {
+      ctx.beginPath();
+      ctx.moveTo(atq.x, atq.y);
+      ctx.lineTo(W*0.5, H*0.68);
+      ctx.strokeStyle='rgba(0,230,118,0.3)'; ctx.lineWidth=1.5; ctx.setLineDash([2,3]);
+      ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='rgba(0,230,118,0.5)';
+      ctx.font='700 9px Barlow';
+      ctx.textAlign='center';
+      ctx.fillText('CORRE', W*0.5+20, H*0.5);
+    }
+
+    // defender label
+    if (cp > 80 && cp < 160) {
+      ctx.fillStyle='rgba(255,70,85,0.6)';
+      ctx.font='700 9px Barlow';
+      ctx.textAlign='center';
+      ctx.fillText('RETROCEDE', dx+0, dy+22);
+    }
+
+    drawPlayer(apoyo.x, apoyo.y, '#ffd600', 'APY');
+    drawPlayer(ax, ay, '#00e676', 'ATQ', cp>80);
+    drawPlayer(dx, dy, '#ff4655', 'DEF', true);
+
+    // ball
+    ctx.beginPath(); ctx.arc(bx,by,6,0,Math.PI*2);
+    ctx.fillStyle='#fff'; ctx.fill();
+
+    t++;
+  }
+  return draw;
+}
+
+// -------- ZONAS 2-1-2 (c3) --------
+function initC3() {
+  const c = getCanvas('c3');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+
+  const zone3 = H * 0.33; // attack/mid boundary
+  const zone6 = H * 0.66; // mid/def boundary
+
+  const players = [
+    { x: W*0.25, y: H*0.15, col:'#00e676', role:'ATQ', zone:[0,zone3] },
+    { x: W*0.75, y: H*0.15, col:'#00e676', role:'ATQ', zone:[0,zone3] },
+    { x: W*0.5,  y: H*0.5,  col:'#ffd600', role:'PVT', zone:[zone3,zone6] },
+    { x: W*0.25, y: H*0.82, col:'#ff4655', role:'DFC', zone:[zone6,H] },
+    { x: W*0.75, y: H*0.82, col:'#ff4655', role:'DFC', zone:[zone6,H] },
+  ];
+
+  let ballX = W*0.5, ballY = H*0.5;
+  let ballTarget = 0, ballProgress = 0;
+  let currentPasser = 2;
+  let t = 0;
+
+  const ballSeq = [0,2,1,2,3,2,4,2,0,2];
+  let seqIdx = 0;
+
+  function drawPlayer(p) {
+    // bounce within zone
+    const midY = (p.zone[0] + p.zone[1])/2;
+    const bobY = p.y + Math.sin(t*0.03 + p.x)*4;
+    ctx.beginPath(); ctx.arc(p.x, bobY, 14, 0, Math.PI*2);
+    ctx.fillStyle = p.col; ctx.fill();
+    ctx.fillStyle = p.col === '#ff4655' ? '#fff' : '#000';
+    ctx.font = '700 8px Barlow Condensed';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(p.role, p.x, bobY);
+    return bobY;
+  }
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0f1a13'; ctx.fillRect(0,0,W,H);
+
+    // zone bands
+    ctx.fillStyle='rgba(0,230,118,0.05)';
+    ctx.fillRect(0,0,W,zone3);
+    ctx.fillStyle='rgba(255,214,0,0.05)';
+    ctx.fillRect(0,zone3,W,zone6-zone3);
+    ctx.fillStyle='rgba(255,70,85,0.05)';
+    ctx.fillRect(0,zone6,W,H-zone6);
+
+    // zone lines
+    [zone3,zone6].forEach(y => {
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y);
+      ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+      ctx.stroke(); ctx.setLineDash([]);
+    });
+
+    // pass line
+    const fp = players[currentPasser];
+    const tp = players[ballSeq[(seqIdx+1)%ballSeq.length]];
+    ctx.beginPath();
+    ctx.moveTo(fp.x, fp.y); ctx.lineTo(tp.x, tp.y);
+    ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1; ctx.setLineDash([3,4]);
+    ctx.stroke(); ctx.setLineDash([]);
+
+    const ys = {};
+    players.forEach((p,i) => { ys[i] = drawPlayer(p); });
+
+    // ball
+    const fromP = players[currentPasser];
+    const toP = players[ballSeq[seqIdx]];
+    const bx = fromP.x + (toP.x - fromP.x)*ballProgress;
+    const by = (ys[currentPasser]||fromP.y) + ((ys[ballSeq[seqIdx]]||toP.y) - (ys[currentPasser]||fromP.y))*ballProgress;
+    ctx.beginPath(); ctx.arc(bx,by,6,0,Math.PI*2);
+    ctx.fillStyle='#fff'; ctx.fill();
+
+    t++;
+    ballProgress += 0.025;
+    if (ballProgress >= 1) {
+      ballProgress = 0;
+      currentPasser = ballSeq[seqIdx];
+      seqIdx = (seqIdx+1) % ballSeq.length;
+    }
+  }
+  return draw;
+}
+
+// -------- ROTACIONES (c4) --------
+function initC4() {
+  const c = getCanvas('c4');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+
+  // Two teams on field, bench
+  const onField = [
+    { x:W*0.25, y:H*0.2, col:'#00d4ff', out:false, bench:{ x:W*0.05, y:H*0.75 } },
+    { x:W*0.75, y:H*0.2, col:'#00d4ff', out:false, bench:{ x:W*0.15, y:H*0.75 } },
+    { x:W*0.5,  y:H*0.5, col:'#00d4ff', out:false, bench:{ x:W*0.25, y:H*0.75 } },
+    { x:W*0.25, y:H*0.78,col:'#00d4ff', out:false, bench:{ x:W*0.35, y:H*0.75 } },
+    { x:W*0.75, y:H*0.78,col:'#00d4ff', out:false, bench:{ x:W*0.45, y:H*0.75 } },
+  ];
+  const bench = [
+    { x:W*0.05, y:H*0.9, col:'#ffd600', waiting:true },
+    { x:W*0.18, y:H*0.9, col:'#ffd600', waiting:true },
+    { x:W*0.32, y:H*0.9, col:'#ffd600', waiting:true },
+  ];
+
+  let t = 0;
+  let subPhase = 0, subT = 0, subIdx = 0;
+  let animatedPlayer = null, animatedBench = null;
+  let animProg = 0;
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0f1a13'; ctx.fillRect(0,0,W,H);
+
+    // field
+    ctx.fillStyle='rgba(26,74,46,0.5)'; ctx.fillRect(W*0.01,H*0.02,W*0.98,H*0.7);
+    ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.lineWidth=1.5;
+    ctx.strokeRect(W*0.01,H*0.02,W*0.98,H*0.7);
+    ctx.beginPath(); ctx.moveTo(W*0.01,H*0.37); ctx.lineTo(W*0.99,H*0.37);
+    ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.beginPath(); ctx.arc(W*0.5,H*0.37,W*0.12,0,Math.PI*2);
+    ctx.stroke();
+
+    // bench area
+    ctx.fillStyle='rgba(255,214,0,0.04)';
+    ctx.fillRect(0,H*0.78,W,H*0.22);
+    ctx.fillStyle='rgba(255,214,0,0.3)';
+    ctx.font='600 9px Barlow'; ctx.textAlign='left';
+    ctx.fillText('BANCA', W*0.02, H*0.86);
+
+    // sub arrow
+    subT++;
+    const subCycle = 200;
+    const cp = subT % subCycle;
+
+    if (cp === 0) {
+      subIdx = (subIdx+1) % onField.length;
+    }
+
+    onField.forEach((p, i) => {
+      let px = p.x, py = p.y;
+      if (cp > 80 && cp < 140 && i === subIdx) {
+        const pr = (cp-80)/60;
+        px = p.x + (p.bench.x - p.x)*pr;
+        py = p.y + (H*0.85 - p.y)*pr;
+        // draw arrow
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y); ctx.lineTo(px, py);
+        ctx.strokeStyle='rgba(255,214,0,0.5)'; ctx.lineWidth=1.5;
+        ctx.setLineDash([3,3]); ctx.stroke(); ctx.setLineDash([]);
+      }
+
+      ctx.beginPath(); ctx.arc(px,py,13,0,Math.PI*2);
+      ctx.fillStyle = (cp>80 && cp<140 && i===subIdx) ? '#ffd600' : p.col;
+      ctx.fill();
+      ctx.fillStyle='#000'; ctx.font='700 8px Barlow Condensed';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('J'+(i+1), px, py);
+    });
+
+    bench.forEach((p,i) => {
+      let px = p.x, py = p.y;
+      if (cp > 100 && cp < 160 && i === 0) {
+        const pr = (cp-100)/60;
+        // sub comes in to field spot
+        const tgt = onField[subIdx];
+        px = p.x + (tgt.x - p.x)*pr;
+        py = p.y + (tgt.y - p.y)*pr;
+        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(px,py);
+        ctx.strokeStyle='rgba(0,230,118,0.5)'; ctx.lineWidth=1.5;
+        ctx.setLineDash([3,3]); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle='rgba(0,230,118,0.5)'; ctx.font='700 9px Barlow';
+        ctx.textAlign='center';
+        ctx.fillText('ENTRA', px, py-18);
+      }
+      ctx.beginPath(); ctx.arc(px,py,12,0,Math.PI*2);
+      ctx.fillStyle = p.col; ctx.fill();
+      ctx.fillStyle='#000'; ctx.font='700 8px Barlow Condensed';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('S'+(i+1), px, py);
+    });
+
+    // ball
+    const bx = W*0.5 + Math.sin(t*0.04)*W*0.25;
+    const by = H*0.35 + Math.cos(t*0.03)*H*0.22;
+    ctx.beginPath(); ctx.arc(bx,by,5,0,Math.PI*2);
+    ctx.fillStyle='#fff'; ctx.fill();
+
+    t++;
+  }
+  return draw;
+}
+
+// =========================================================
+// SIM ENGINE
+// =========================================================
+const simState = {};
+const drawFns = {};
+
+function initSim(id) {
+  if (drawFns[id]) return;
+  const init = { c1:initC1, c2:initC2, c3:initC3, c4:initC4 };
+  if (init[id]) { drawFns[id] = init[id](); }
+}
+
+function runSim(id) {
+  if (!simState[id] || !simState[id].running) return;
+  if (drawFns[id]) drawFns[id]();
+  simState[id].raf = requestAnimationFrame(() => runSim(id));
+}
+
+function toggleSim(id) {
+  initSim(id);
+  const btn = document.getElementById('btn-' + id + '-play');
+  if (!simState[id]) simState[id] = { running: false };
+  if (simState[id].running) {
+    cancelAnimationFrame(simState[id].raf);
+    simState[id].running = false;
+    btn.textContent = '▶ Play';
+    btn.classList.remove('active');
+  } else {
+    simState[id].running = true;
+    btn.textContent = '⏸ Pause';
+    btn.classList.add('active');
+    runSim(id);
+  }
+}
+
+function resetSim(id) {
+  if (simState[id] && simState[id].running) {
+    cancelAnimationFrame(simState[id].raf);
+    simState[id].running = false;
+  }
+  simState[id] = null;
+  drawFns[id] = null;
+  const btn = document.getElementById('btn-' + id + '-play');
+  if (btn) { btn.textContent='▶ Play'; btn.classList.remove('active'); }
+  const c = document.getElementById(id);
+  if (c) {
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0,0,c.width,c.height);
+    ctx.fillStyle='#0f1a13'; ctx.fillRect(0,0,c.width,c.height);
+  }
+}
+
+// init canvas sizes on load
+window.addEventListener('load', () => {
+  ['c1','c2','c3','c4'].forEach(id => {
+    const c = document.getElementById(id);
+    if (!c) return;
+    const w = c.parentElement.clientWidth - 32;
+    c.width = w;
+    c.style.width = w + 'px';
+    const ctx = c.getContext('2d');
+    ctx.fillStyle='#0f1a13'; ctx.fillRect(0,0,w,c.height);
+    // draw a hint
+    ctx.fillStyle='rgba(255,255,255,0.2)';
+    ctx.font='600 13px Barlow';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('▶ Presiona Play para ver la simulación', w/2, c.height/2);
+  });
+});
+</script>
+</body>
+</html>
